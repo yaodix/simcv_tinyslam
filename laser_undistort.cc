@@ -45,7 +45,7 @@ void test_CastStatic() {
 
   // 绘制激光雷达效果
   for (int i = 0; i < trans_in_map.size(); i++) {
-    cv::circle(canvs, trans_in_map[i], 1, cv::Scalar(0,0,255), 1);
+    canvs.at<cv::Vec3b>(trans_in_map[i]) = cv::Vec3b(0,0,255);
   }
   cv::circle(canvs, trans_in_map[0], 1, cv::Scalar(0,255,0), 3);
   cv::circle(canvs, trans_in_map.back(), 1, cv::Scalar(255,0,0), 1);
@@ -53,18 +53,19 @@ void test_CastStatic() {
 }
 
 int test_CastMove() {
-    cv::Mat map = cv::Mat::zeros(800, 410, CV_8UC1);
+    cv::Mat map = cv::Mat::zeros(800, 450, CV_8UC1);
   map.setTo(kUnknown);
   cv::line(map, cv::Point(350, 50), cv::Point(350, 750), cv::Scalar::all(kObstacle), 3);
   cv::Mat canvs = map.clone();
   cv::cvtColor(canvs, canvs, cv::COLOR_GRAY2BGR);
 
   ScanData scan_data;
-  Lidar lidar(2, 0.0);
+  Lidar lidar(2, 0.2);
   lidar.SetLaserDetectionMax(300);
   double robot_x, robot_y, robot_angle;
   // get robot pose
   double start_robot_x = 300;  // move: 300->200
+  double x_diff = 100;
   robot_x = 300;  // move: 300->100
   robot_y = 400;
   robot_angle = 0;
@@ -72,7 +73,7 @@ int test_CastMove() {
   cv::circle(canvs, cv::Point(robot_x, robot_y), 8, cv::Scalar(0,120,255), 1);
   for (int i=0; i < kScanSize; i++) {
     double cur_angle = robot_angle + (360.0/kScanSize)*i;
-    robot_x = start_robot_x -  i* 100.0 / kScanSize;
+    robot_x = start_robot_x -  i*x_diff / kScanSize;
     double laser_dist, laser_angle;
     lidar.Ray(robot_x, robot_y, cur_angle, laser_dist, laser_angle, map);
     scan_data.laser_distance[i] =  laser_dist;
@@ -89,7 +90,7 @@ int test_CastMove() {
     }
   }
   // 运动完成后机器人位置
-  cv::circle(canvs, cv::Point(100, robot_y), 8, cv::Scalar(0,120,255), 1);
+  cv::circle(canvs, cv::Point(200, robot_y), 8, cv::Scalar(0,120,255), 1);
 
   // 变换到当前坐标系
   std::vector<cv::Point2d> trans_in_map;
@@ -98,7 +99,7 @@ int test_CastMove() {
 
   // 绘制原始激光雷达效果
   for (int i = 0; i < trans_in_map.size(); i++) {
-    cv::circle(canvs, trans_in_map[i], 1, cv::Scalar(0,0,255), 1);
+    canvs.at<cv::Vec3b>(trans_in_map[i]) = cv::Vec3b(0,0,255);
   }
   cv::circle(canvs, trans_in_map[0], 1, cv::Scalar(0,255,0), 3);
   cv::circle(canvs, trans_in_map.back(), 1, cv::Scalar(255,0,0), 1);
@@ -108,9 +109,9 @@ int test_CastMove() {
   scan_data.TransUndistort(trans_in_map);
   // 绘制去畸变激光雷达效果
   for (int i = 0; i < trans_in_map.size(); i++) {
-    cv::circle(canvs, trans_in_map[i], 1, cv::Scalar(0,255,0), 1);
+    canvs.at<cv::Vec3b>(trans_in_map[i]) = cv::Vec3b(0,255,255);
   }
-    cv::circle(canvs, trans_in_map[0], 1, cv::Scalar(0,255,0), 3);
+  cv::circle(canvs, trans_in_map[0], 1, cv::Scalar(0,255,0), 3);
   cv::circle(canvs, trans_in_map.back(), 1, cv::Scalar(255,0,0), 1);
 
   return 0;

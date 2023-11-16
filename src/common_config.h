@@ -11,5 +11,5 @@ const int kPixelPerMeter = 20;  // 每个像素5cm， 20个像素1m
 
 // value in map
 const int kFreeSpace = 255;
-const int kUnknown = 55;
+const int kUnknown = 125;
 const int kObstacle = 0;

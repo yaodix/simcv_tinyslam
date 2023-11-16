@@ -15,6 +15,6 @@ message(STATUS "OpenCV version: ${OpenCV_VERSION}")
 message(STATUS "OpenCV_LIBS:${OpenCV_LIBS}")
 message(STATUS "OpenCV_INCLUDE_DIRS:${OpenCV_INCLUDE_DIRS}")
 
-add_executable(demo main.cc)
+add_executable(laser_undistort laser_undistort.cc ./src/lidar.cc ./src/lidar.cc)
 
-target_link_libraries(demo ${OpenCV_LIBS} pthread)
+target_link_libraries(laser_undistort ${OpenCV_LIBS} pthread)

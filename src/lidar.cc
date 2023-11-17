@@ -8,7 +8,7 @@ int Lidar::Scan(ScanData& scan_data, const Robot& robot, const cv::Mat& map) {
   for (int i=0; i < scan_size_; i++) {
     // get robot pose
     double robot_x, robot_y, robot_angle;
-    robot.GetPose(robot_angle, robot_y, robot_angle);
+    robot.GetPose(robot_x, robot_y, robot_angle);
     double cur_angle = robot_angle + (360.0/scan_size_)*i;
 
     double laser_dist, laser_angle;
@@ -20,6 +20,10 @@ int Lidar::Scan(ScanData& scan_data, const Robot& robot, const cv::Mat& map) {
       scan_data.values[i] = kFreeSpace;
     } else {
       scan_data.values[i] = kObstacle;
+            // 记录
+      scan_data.robot_base_pts[i].x = robot_x;
+      scan_data.robot_base_pts[i].y = robot_y;
+      scan_data.robot_base_angle[i] = 0;
     }
   }
 }

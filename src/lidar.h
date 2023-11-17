@@ -19,12 +19,13 @@ struct ScanData {
     laser_angle.resize(kScanSize);
     values.resize(kScanSize);
 
-    laser_base_pts.resize(kScanSize);
-    laser_base_angle.resize(kScanSize);
+    robot_base_pts.resize(kScanSize);
+    robot_base_angle.resize(kScanSize);
     nb_points = kScanSize;
   }
 
-  void TransRaw(cv::Point base_emit_pos, double base_angle, std::vector<cv::Point2d>& trans_laser_pts) {
+  void TransRaw(cv::Point base_emit_pos, double base_angle,
+      std::vector<cv::Point2d>& trans_laser_pts) const {
     trans_laser_pts.clear();
     double x_end, y_end;
     for (int i = 0; i < nb_points; i++) {
@@ -36,13 +37,13 @@ struct ScanData {
     }
   }
 
-  void TransUndistort(std::vector<cv::Point2d>& trans_laser_pts) {
+  void TransUndistort(std::vector<cv::Point2d>& trans_laser_pts) const{
     trans_laser_pts.clear();
     double x_end, y_end;
     for (int i = 0; i < nb_points; i++) {
       if (values[i] == kObstacle) {
-        x_end = laser_base_pts[i].x + std::cos((laser_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i];
-        y_end = laser_base_pts[i].y + (-std::sin((laser_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i]);  // 转到图像坐标系
+        x_end = robot_base_pts[i].x + std::cos((robot_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i];
+        y_end = robot_base_pts[i].y + (-std::sin((robot_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i]);  // 转到图像坐标系
         trans_laser_pts.emplace_back(x_end, y_end);
       }
     }
@@ -53,20 +54,23 @@ struct ScanData {
   std::vector<double> laser_angle;  // 激光雷达下的激光坐标反射时的发射角度
   std::vector<int> values;  // 标记为障碍物点和非障碍物点
 
-  std::vector<cv::Point> laser_base_pts;  // 激光雷达发出时候的基座坐标点
-  std::vector<double> laser_base_angle;  // 激光雷达所在基座发出的base角度
+  std::vector<cv::Point> robot_base_pts;  // 激光雷达发出时候的基座坐标点
+  std::vector<double> robot_base_angle;  // 激光雷达所在基座发出的base角度
   int nb_points;
 };
 
 class Lidar {
  public:
   Lidar() = default;
-  Lidar(double reselution, double std_err) {
-    reselution_ = reselution;
+  Lidar(double std_err) {
     std_err_ = std_err;
   }
   void SetLaserDetectionMax(int max_len_pixel) {
     detection_max_ = max_len_pixel;
+  }
+  
+  int GetLaserDetectionMax() const {
+    return detection_max_;
   }
 
   int Scan(ScanData& scan_data, const Robot& robot, const cv::Mat& map);

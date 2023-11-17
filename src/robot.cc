@@ -3,9 +3,6 @@
 #include "robot.h"
 
 // 采用半圆半方结构
-void Robot::InitRobot() {
-
-}
 
 void Robot::Draw(cv::Mat& show_map) {
   cv::circle(show_map, cv::Point(x_, y_),robot_radius, cv::Scalar(255,0,0), 2);

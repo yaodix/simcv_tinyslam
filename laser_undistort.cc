@@ -13,7 +13,7 @@ void test_CastStatic() {
   cv::cvtColor(canvs, canvs, cv::COLOR_GRAY2BGR);
 
   ScanData scan_data;
-  Lidar lidar(2, 0.0);
+  Lidar lidar(0.0);
   lidar.SetLaserDetectionMax(300);
   double robot_x, robot_y, robot_angle;
   // get robot pose
@@ -60,7 +60,7 @@ int test_CastMove() {
   cv::cvtColor(canvs, canvs, cv::COLOR_GRAY2BGR);
 
   ScanData scan_data;
-  Lidar lidar(2, 0.2);
+  Lidar lidar(0.2);
   lidar.SetLaserDetectionMax(300);
   double robot_x, robot_y, robot_angle;
   // get robot pose
@@ -84,9 +84,9 @@ int test_CastMove() {
     } else {
       scan_data.values[i] = kObstacle;
       // 记录
-      scan_data.laser_base_pts[i].x = robot_x;
-      scan_data.laser_base_pts[i].y = robot_y;
-      scan_data.laser_base_angle[i] = 0;
+      scan_data.robot_base_pts[i].x = robot_x;
+      scan_data.robot_base_pts[i].y = robot_y;
+      scan_data.robot_base_angle[i] = 0;
     }
   }
   // 运动完成后机器人位置

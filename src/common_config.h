@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 
 const double kDeg2rad = M_PI / 180.;
 const double kRad2deg = 180. / M_PI;
@@ -10,6 +11,6 @@ const int kPixelPerMeter = 20;  // 每个像素5cm， 20个像素1m
 
 
 // value in map
-const int kFreeSpace = 255;
-const int kUnknown = 125;
+const int kFreeSpace = 155;
+const int kUnknown = 255;
 const int kObstacle = 0;

@@ -19,12 +19,15 @@ int main() {
   canvs.setTo(kUnknown);
   cv::rectangle(canvs, {50, 50}, {350, 250}, cv::Scalar::all(kObstacle),3);
 
-
   Robot robot(80, 100, 0);
   Lidar lidar(0.2);
+  lidar.SetLaserDetectionMax(100);
   CostMap cost_map(canvs);
 
-  cv::Mat map_canvs =cost_map.GetGridMapCanvs().clone();
+  ScanData scan_data;
+  lidar.Scan(scan_data, robot, cost_map.GetGtMap());
+  cost_map.DrawScanData(scan_data, 2);
+  cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
   robot.Draw(map_canvs);
 
 

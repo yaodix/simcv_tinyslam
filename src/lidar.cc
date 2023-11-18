@@ -20,15 +20,15 @@ int Lidar::Scan(ScanData& scan_data, const Robot& robot, const cv::Mat& map) {
       scan_data.values[i] = kFreeSpace;
     } else {
       scan_data.values[i] = kObstacle;
-            // 记录
-      scan_data.robot_base_pts[i].x = robot_x;
-      scan_data.robot_base_pts[i].y = robot_y;
-      scan_data.robot_base_angle[i] = 0;
     }
+    // 记录
+    scan_data.robot_base_pts[i].x = robot_x;
+    scan_data.robot_base_pts[i].y = robot_y;
+    scan_data.robot_base_angle[i] = robot_angle;
   }
 }
 
-// angle - [180°, 180°]
+// angle - [0°, 360°]
 int Lidar::Ray(double x_start, double y_start, double angle, double& laser_distance, double& laser_angle, const cv::Mat& map) {
   laser_distance = 0.0;
   laser_angle = 0.0;

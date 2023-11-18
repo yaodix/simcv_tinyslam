@@ -31,7 +31,7 @@ struct ScanData {
     for (int i = 0; i < nb_points; i++) {
       if (values[i] == kObstacle) {
         x_end = base_emit_pos.x + std::cos((base_angle+laser_angle[i])*kDeg2rad)*laser_distance[i];
-        y_end = base_emit_pos.y + (-std::sin((base_angle+laser_angle[i])*kDeg2rad)*laser_distance[i]);// 转到图像坐标系
+        y_end = base_emit_pos.y + (std::sin((base_angle+laser_angle[i])*kDeg2rad)*laser_distance[i]);// 转到图像坐标系
         trans_laser_pts.emplace_back(x_end, y_end);
       }
     }
@@ -43,7 +43,7 @@ struct ScanData {
     for (int i = 0; i < nb_points; i++) {
       if (values[i] == kObstacle) {
         x_end = robot_base_pts[i].x + std::cos((robot_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i];
-        y_end = robot_base_pts[i].y + (-std::sin((robot_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i]);  // 转到图像坐标系
+        y_end = robot_base_pts[i].y + (std::sin((robot_base_angle[i]+laser_angle[i])*kDeg2rad)*laser_distance[i]);  // 转到图像坐标系
         trans_laser_pts.emplace_back(x_end, y_end);
       }
     }

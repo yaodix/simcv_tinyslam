@@ -109,7 +109,7 @@ int test_CastMove() {
   scan_data.TransUndistort(trans_in_map);
   // 绘制去畸变激光雷达效果
   for (int i = 0; i < trans_in_map.size(); i++) {
-    canvs.at<cv::Vec3b>(trans_in_map[i]) = cv::Vec3b(0,255,255);
+    canvs.at<cv::Vec3b>(trans_in_map[i]) = cv::Vec3b(0,255,0);
   }
   cv::circle(canvs, trans_in_map[0], 1, cv::Scalar(0,255,0), 3);
   cv::circle(canvs, trans_in_map.back(), 1, cv::Scalar(255,0,0), 1);

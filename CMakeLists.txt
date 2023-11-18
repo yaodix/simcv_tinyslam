@@ -15,8 +15,8 @@ message(STATUS "OpenCV version: ${OpenCV_VERSION}")
 message(STATUS "OpenCV_LIBS:${OpenCV_LIBS}")
 message(STATUS "OpenCV_INCLUDE_DIRS:${OpenCV_INCLUDE_DIRS}")
 
-add_executable(laser_undistort laser_undistort.cc ./src/lidar.cc ./src/lidar.cc ./src/cost_map.cc)
-add_executable(grid_map draw_grid_map.cc)
+add_executable(laser_undistort laser_undistort.cc ./src/lidar.cc ./src/robot.cc)
+add_executable(grid_map draw_grid_map.cc ./src/lidar.cc ./src/robot.cc ./src/cost_map.cc)
 
 target_link_libraries(laser_undistort ${OpenCV_LIBS} pthread)
 target_link_libraries(grid_map ${OpenCV_LIBS} pthread)

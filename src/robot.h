@@ -31,12 +31,11 @@ class Robot {
     theta = theta_;
   }
 
-  void Draw(cv::Mat& show_map);
   // 移动过程，仅含原地旋转和直线运动
   int Move(const std::vector<cv::Point>& path);  // 轨迹
 
  public:
-  int robot_radius = 5;  // unit: pixel
+  int robot_radius = 6;  // unit: pixel
 
   double linear_speed_ = 0;
   double twist_speed_ = 0;

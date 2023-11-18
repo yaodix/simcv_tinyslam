@@ -3,10 +3,10 @@
 #include <iostream>
 #include <vector>
 
-
-
-
 int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/) {
+  if (map_canvs_.empty()) {
+    map_canvs_ = cv::Mat(gt_map_.size(), CV_8UC3, cv::Scalar::all(kUnknown));
+  }
   std::vector<cv::Point2d> trans_in_map;
   trans_in_map.reserve(500);
   scan_data.TransUndistort(trans_in_map);
@@ -17,16 +17,41 @@ int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/) {
       bresenham_line(scan_data.robot_base_pts[i].x, scan_data.robot_base_pts[i].y,
         trans_in_map[i].x, trans_in_map[i].y, pts);
       for (const auto& pt : pts) {
-        grid_map_.at<uchar>(pt) = kFreeSpace;
+        map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b::all(kFreeSpace);
       }
     }  
   } else if(method == 2) {  // 绘制点和对应线，美化线的显示
+    // 对当前线条进行插补
+    std::vector<cv::Point2d> fix_gap_pts;
+    fix_gap_pts.reserve(trans_in_map.size()/10);
+    for (int i = 0; i < trans_in_map.size()-1; i++) {
+      if ((abs(trans_in_map[i].x - trans_in_map[i+1].x) + abs(trans_in_map[i].y - trans_in_map[i+1].y)) <= 4) {
+        std::vector<cv::Point> tmp_pts;
+        bresenham_line(trans_in_map[i], trans_in_map[i+1], tmp_pts);
+        fix_gap_pts.insert(fix_gap_pts.end(), tmp_pts.begin(), tmp_pts.end());
+      }
+    }
+    trans_in_map.insert(trans_in_map.end(), fix_gap_pts.begin(), fix_gap_pts.end());
+    std::vector<cv::Point> pts(200);
+    for (int i = 0; i < trans_in_map.size(); i++) {
+      bresenham_line(scan_data.robot_base_pts[i].x, scan_data.robot_base_pts[i].y,
+        trans_in_map[i].x, trans_in_map[i].y, pts);
+      for (const auto& pt : pts) {
+        map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b::all(kFreeSpace);
+      }
+    }  
+
 
   }
   for (const auto& pt : trans_in_map) {
-    grid_map_.at<uchar>(pt) = kObstacle;
+    map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b::all(kObstacle);
   }
 }
+
+int CostMap::bresenham_line(cv::Point pt1, cv::Point pt2, std::vector<cv::Point>& line_pts) {
+  return bresenham_line(pt1.x, pt1.y, pt2.x, pt2.y, line_pts);
+}
+
 
 int CostMap::bresenham_line(int x1, int y1, int x2, int y2, std::vector<cv::Point>& line_pts) {
   line_pts.clear();

@@ -37,8 +37,8 @@ class Robot {
  public:
   int robot_radius = 6;  // unit: pixel
 
-  double linear_speed_ = 0;
-  double twist_speed_ = 0;
+  double linear_speed_ = 2;
+  double twist_speed_ = 3;
 
   double x_, y_;   // 位置，单位 pixel
   double theta_;  // 机器人角度，单位 degree

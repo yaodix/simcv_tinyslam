@@ -14,3 +14,7 @@ const int kPixelPerMeter = 20;  // 每个像素5cm， 20个像素1m
 const int kFreeSpace = 155;
 const int kUnknown = 255;
 const int kObstacle = 0;
+
+// move
+const double kPositionTolerance = 3;
+const double kAngleTolerance = 3;

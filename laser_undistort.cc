@@ -53,7 +53,7 @@ void test_CastStatic() {
 }
 
 int test_CastMove() {
-    cv::Mat map = cv::Mat::zeros(800, 450, CV_8UC1);
+    cv::Mat map = cv::Mat::zeros(800, 550, CV_8UC1);
   map.setTo(kUnknown);
   cv::line(map, cv::Point(350, 50), cv::Point(350, 750), cv::Scalar::all(kObstacle), 3);
   cv::Mat canvs = map.clone();
@@ -61,14 +61,14 @@ int test_CastMove() {
 
   ScanData scan_data;
   Lidar lidar(0.2);
-  lidar.SetLaserDetectionMax(300);
+  lidar.SetLaserDetectionMax(200);
   double robot_x, robot_y, robot_angle;
   // get robot pose
   double start_robot_x = 300;  // move: 300->200
   double x_diff = 100;
   robot_x = 300;  // move: 300->100
   robot_y = 400;
-  robot_angle = 0;
+  robot_angle = 20;
 
   cv::circle(canvs, cv::Point(robot_x, robot_y), 8, cv::Scalar(0,120,255), 1);
   for (int i=0; i < kScanSize; i++) {

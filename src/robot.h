@@ -2,7 +2,9 @@
 
 #include <iostream>
 #include <math.h>
+#include <atomic>
 
+#include "common_config.h"
 #include "opencv2/opencv.hpp"
 
 
@@ -35,12 +37,12 @@ class Robot {
   int Move(const std::vector<cv::Point>& path);  // 轨迹
 
  public:
-  int robot_radius = 6;  // unit: pixel
+  int robot_radius = 0.6 * kPixelPerMeter / 2;  // unit: pixel
 
   double linear_speed_ = 2;
   double twist_speed_ = 3;
 
-  double x_, y_;   // 位置，单位 pixel
-  double theta_;  // 机器人角度，单位 degree
+  std::atomic<double> x_, y_;   // 位置，单位 pixel
+  std::atomic<double> theta_;  // 机器人角度，单位 degree
 
 };

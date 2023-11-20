@@ -7,7 +7,7 @@ const double kRad2deg = 180. / M_PI;
 
 // param of lidar
 const int kScanSize = 1450;  // 1450个扫描束每周
-const int kPixelPerMeter = 20;  // 每个像素5cm， 20个像素1m
+const int kPixelPerMeter = 50;  // 每个像素2cm， 50个像素1m
 
 
 // value in map

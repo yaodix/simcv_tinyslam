@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <thread>
 
 #include "opencv2/opencv.hpp"
 
@@ -24,18 +25,21 @@ int main() {
   std::vector<cv::Point> path;
   path.emplace_back(robot.x_, robot.y_);
   path.emplace_back(140, 200);
-  path.emplace_back(140, 200);
-  path.emplace_back(300, 130);
+  path.emplace_back(300, 200);
+  path.emplace_back(340, 60);
 
+  std::thread robot_move(&Robot::Move, &robot, path);
+  robot_move.detach();
 
-
-  robot.Move();
-
-  cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
-  robot.Draw(map_canvs);
-
-
-
+  while(1) {
+    double r_x, r_y, r_theta;
+    robot.GetPose(r_x, r_y, r_theta);
+    cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
+    cv::polylines(map_canvs, path, false, cv::Scalar(0, 123, 255), 1);
+    robot.Draw(map_canvs);
+    cv::imshow("robot_move", map_canvs);
+    cv::waitKey(30);    
+  }
 
   return 0;
 }

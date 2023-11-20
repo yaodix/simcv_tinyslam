@@ -1,13 +1,17 @@
 
 #include "robot.h"
+
+#include <chrono>
+#include <thread>
+
 #include "common_config.h"
 
 // 采用半圆半方结构
 
 void Robot::Draw(cv::Mat& show_map) {
-  cv::circle(show_map, cv::Point(x_, y_),robot_radius, cv::Scalar(255,0,0), 1);
-  int x_robot_direct = std::round(robot_radius * cos(theta_));
-  int y_robot_direct = std::round(robot_radius * sin(theta_));
+  cv::circle(show_map, cv::Point(x_, y_), robot_radius, cv::Scalar(255,0,0), 1);
+  int x_robot_direct = std::round(robot_radius * 1.3 * cos(theta_*kDeg2rad));
+  int y_robot_direct = std::round(robot_radius * 1.3 * sin(theta_*kDeg2rad));
   cv::arrowedLine(show_map, cv::Point(x_, y_), cv::Point(x_+x_robot_direct, y_+y_robot_direct),
     cv::Scalar(255,0,0), 1);
 }
@@ -28,6 +32,9 @@ int Robot::Move(const std::vector<cv::Point>& path) {
     return 1;
   }
   if (path.size() < 2) return 1;
+  std::chrono::milliseconds t(50);
+  std::cout << "stat positon " << x_ << " " << y_ << " " << theta_ << std::endl;
+
   for (int i =0; i < path.size()-1; ++i) {
     // 先判断方向是否一致，否，则旋转方向
     double path_angle = getPathAngle(path[i], path[i+1]);
@@ -35,26 +42,31 @@ int Robot::Move(const std::vector<cv::Point>& path) {
     if (path_angle < theta_) {
       cur_twist_speed = -twist_speed_;
     }
+    if (std::abs(theta_ - path_angle) > kAngleTolerance) {
+      std::cout << "new destination " << x_ << " " << y_ << " " << path_angle << std::endl;
+    }
 
     while (std::abs(theta_ - path_angle) > kAngleTolerance) {
-      theta_ += twist_speed_;
+      theta_ = theta_ + cur_twist_speed;
       // delay
+      std::this_thread::sleep_for(t);
+      std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
     }
 
     // 平移移动
     double len = cv::norm(path[i+1]- path[i]);
     int seg_cnt = len / linear_speed_;
-    cv::Point direct_vec = (path[i+1]- path[i])/len;
+    cv::Point2d direct_vec = cv::Point2d(path[i+1]- path[i])/(double)seg_cnt;
+    std::cout << "new destination " << path[i+1].x << " " << path[i+1].y << " " << theta_ << std::endl;
 
     for(int vec_inc = 1; vec_inc <= seg_cnt; vec_inc++) {
-      x_ = x_ + direct_vec.x * vec_inc;
-      y_ = y_ + direct_vec.y * vec_inc;
+      x_ = x_ + direct_vec.x;
+      y_ = y_ + direct_vec.y;
       // delay
-      
+      std::this_thread::sleep_for(t);
+      std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
     }
-    
   }
-
 }
 
 

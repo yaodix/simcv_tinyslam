@@ -50,8 +50,8 @@ struct ScanData {
   }
 
 
-  std::vector<double> laser_distance;  // 激光雷达下的激光反射回来的距离
-  std::vector<double> laser_angle;  // 激光雷达下的激光坐标反射时的发射角度
+  std::vector<double> laser_distance;  // 激光雷达下的激光反射回来的距离,极坐标
+  std::vector<double> laser_angle;  // 激光雷达下的激光坐标反射时的发射角度,极坐标
   std::vector<int> values;  // 标记为障碍物点和非障碍物点
 
   std::vector<cv::Point> robot_base_pts;  // 激光雷达发出时候的基座坐标点
@@ -66,11 +66,11 @@ class Lidar {
     std_err_ = std_err;
   }
   void SetLaserDetectionMax(int max_len_pixel) {
-    detection_max_ = max_len_pixel;
+    range_max_ = max_len_pixel;
   }
   
   int GetLaserDetectionMax() const {
-    return detection_max_;
+    return range_max_;
   }
 
   int Scan(ScanData& scan_data, const Robot& robot, const cv::Mat& map);
@@ -85,8 +85,8 @@ class Lidar {
   int angle_min_ = 0;  // 激光雷达开始扫描的角度
   int angle_max_ = 360;  // 激光雷达停止扫描的角度
 
-  int detection_min_ = 0.15 * kPixelPerMeter;  // 激光雷达最大探测距离，超过该距离的深度范围0
-  int detection_max_ = 8 * kPixelPerMeter;  // 激光雷达最大探测距离，超过该距离的深度范围0
+  int range_min_ = 0.15 * kPixelPerMeter;  // 激光雷达最大探测距离，超过该距离的深度范围0
+  int range_max_ = 8 * kPixelPerMeter;  // 激光雷达最大探测距离，超过该距离的深度范围0
 
   double std_err_ = 0.2;
 };

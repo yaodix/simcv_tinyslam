@@ -38,7 +38,7 @@ int Lidar::Ray(double x_start, double y_start, double angle, double& laser_dista
   Eigen::Vector2d cast_positon = origin;
   bool collision = false;
 
-  while (!collision && cast_distance < detection_max_) {
+  while (!collision && cast_distance < range_max_) {
     cast_positon += direct*reselution_;
     cast_distance += reselution_;
 
@@ -47,7 +47,7 @@ int Lidar::Ray(double x_start, double y_start, double angle, double& laser_dista
       break;
     }
   }
-  if(collision && (cast_distance >= detection_min_) && (cast_distance <= detection_max_)) {
+  if(collision && (cast_distance >= range_min_) && (cast_distance <= range_max_)) {
         // add noise based on standard deviation error
         double rx = ((double) rand() / (RAND_MAX));
         double ry = ((double) rand() / (RAND_MAX));

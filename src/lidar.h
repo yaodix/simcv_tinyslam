@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <mutex>
 
 #include "opencv2/opencv.hpp"
 
@@ -62,8 +63,8 @@ struct ScanData {
 class Lidar {
  public:
   Lidar() = default;
-  Lidar(double std_err) {
-    std_err_ = std_err;
+  Lidar(double pose_std_err) {  // 机器人姿态误差
+    pose_std_err_ = pose_std_err;
   }
   void SetLaserDetectionMax(int max_len_pixel) {
     range_max_ = max_len_pixel;
@@ -73,12 +74,19 @@ class Lidar {
     return range_max_;
   }
 
-  int Scan(ScanData& scan_data, const Robot& robot, const cv::Mat& map);
+  void GetScanData(ScanData& scan_data) {
+    sd_mtx.lock();
+    scan_data = scan_data_;
+    sd_mtx.unlock();
+  }
+
+  int Scan(const Robot& robot, cv::Mat& map);
  
   int Ray(double x_start, double y_start, double angle, double& laser_dist, double& laser_angle, const cv::Mat& map);
- private:
  
  public:
+
+  ScanData scan_data_;
   // 雷达参数
   int scan_size_ = kScanSize;  // 一帧激光雷达的雷达束数量
   double reselution_ = 2.;  // unit: pixel
@@ -88,5 +96,8 @@ class Lidar {
   int range_min_ = 0.15 * kPixelPerMeter;  // 激光雷达最大探测距离，超过该距离的深度范围0
   int range_max_ = 8 * kPixelPerMeter;  // 激光雷达最大探测距离，超过该距离的深度范围0
 
-  double std_err_ = 0.2;
+  double pose_std_err_ = 0;
+  double ray_std_err_ = 0.2;
+  
+  std::mutex sd_mtx;
 };

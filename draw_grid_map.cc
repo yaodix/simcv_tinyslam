@@ -25,7 +25,7 @@ int main() {
   CostMap cost_map(canvs);
 
   ScanData scan_data;
-  lidar.Scan(scan_data, robot, cost_map.GetGtMap());
+  lidar.Scan(robot, cost_map.GetGtMap());
   cost_map.DrawScanData(scan_data, 2);
   cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
   robot.Draw(map_canvs);

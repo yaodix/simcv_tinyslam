@@ -50,7 +50,7 @@ int Robot::Move(const std::vector<cv::Point>& path) {
       theta_ = theta_ + cur_twist_speed;
       // delay
       std::this_thread::sleep_for(t);
-      std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
+      // std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
     }
 
     // 平移移动
@@ -64,7 +64,7 @@ int Robot::Move(const std::vector<cv::Point>& path) {
       y_ = y_ + direct_vec.y;
       // delay
       std::this_thread::sleep_for(t);
-      std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
+      // std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
     }
   }
 }

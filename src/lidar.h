@@ -79,8 +79,10 @@ class Lidar {
     scan_data = scan_data_;
     sd_mtx.unlock();
   }
+  
+  int LoopScan(const Robot& robot, const cv::Mat& map);
 
-  int Scan(const Robot& robot, cv::Mat& map);
+  int Scan(const Robot& robot, const cv::Mat& map);
  
   int Ray(double x_start, double y_start, double angle, double& laser_dist, double& laser_angle, const cv::Mat& map);
  

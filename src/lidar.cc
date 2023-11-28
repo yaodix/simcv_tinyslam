@@ -1,18 +1,34 @@
 // 单线激光雷达类
+#include <thread>
 
 #include "lidar.h"
 #include <eigen3/Eigen/Dense>
 
-int Lidar::Scan(const Robot& robot, cv::Mat& map) {
+int Lidar::LoopScan(const Robot& robot, const cv::Mat& map) {
+  std::chrono::milliseconds t(10);
+  while (true) {
+    auto preprocess_start = std::chrono::high_resolution_clock::now();
+    Scan(robot, map);
+    auto preprocess_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> preprocess_cost = preprocess_end - preprocess_start;
+    std::cout << "lidar fps " << 1.0 / (preprocess_cost.count()*1) << "hz\n";
+
+    std::this_thread::sleep_for(t);
+  }  
+}
+
+int Lidar::Scan(const Robot& robot, const cv::Mat& map) {
   double x_end, y_end;
 
   double rx = ((double) rand() / (RAND_MAX));
   double ry = ((double) rand() / (RAND_MAX));
   double ra = ((double) rand() / (RAND_MAX));
+  std::chrono::nanoseconds t(30);
 
   sd_mtx.lock();
   for (int i=0; i < scan_size_; i++) {
     // get robot pose
+    std::this_thread::sleep_for(t);
     double robot_x, robot_y, robot_angle;
     robot.GetPose(robot_x, robot_y, robot_angle);
     double cur_angle = robot_angle + (360.0/scan_size_)*i;

@@ -21,7 +21,8 @@ int main() {
   cv::rectangle(canvs, {50, 50}, {350, 250}, cv::Scalar::all(kObstacle),3);
 
   Robot robot(80, 100, 0);
-  Lidar lidar(6);
+  Lidar lidar(0);
+  lidar.SetLaserDetectionMax(100);
   CostMap cost_map(canvs);
 
   std::vector<cv::Point> path;
@@ -31,7 +32,7 @@ int main() {
   path.emplace_back(340, 60);
 
   std::thread robot_move(&Robot::Move, &robot, path);
-  std::thread lidar_scan(&Lidar::Scan, &lidar, robot, canvs);
+  std::thread lidar_scan(&Lidar::LoopScan, &lidar, std::cref(robot), canvs);
 
   robot_move.detach();
   lidar_scan.detach();

@@ -9,8 +9,9 @@
             "type": "cppdbg",
             "request": "launch",
             // "program": "${workspaceFolder}/bin/grid_map", // 重要，一般要修改该路径，此路径是相对activae file，与task.json中 -o输出内容一致
-            // "program": "${workspaceFolder}/bin/laser_undistort", // 重要，一般要修改该路径，此路径是相对activae file，与task.json中 -o输出内容一致
-            "program": "${workspaceFolder}/bin/robot_move", // 重要，一般要修改该路径，此路径是相对activae file，与task.json中 -o输出内容一致
+            // "program": "${workspaceFolder}/bin/laser_undistort", 
+            // "program": "${workspaceFolder}/bin/robot_move",
+            "program": "${workspaceFolder}/bin/slam_no_matching",  
             "args": [], // 存放argv参数
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

@@ -14,7 +14,7 @@ int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/) {
   if(method == 1) {  // 绘制点和对应线
     std::vector<cv::Point> pts(200);
     for (int i = 0; i < trans_in_map.size(); i++) {
-      bresenham_line(scan_data.robot_base_pts[i].x, scan_data.robot_base_pts[i].y,
+      bresenham_line(scan_data.robot_base_pts[0].x, scan_data.robot_base_pts[0].y,
         trans_in_map[i].x, trans_in_map[i].y, pts);
       for (const auto& pt : pts) {
         map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b::all(kFreeSpace);
@@ -34,7 +34,7 @@ int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/) {
     trans_in_map.insert(trans_in_map.end(), fix_gap_pts.begin(), fix_gap_pts.end());
     std::vector<cv::Point> pts(200);
     for (int i = 0; i < trans_in_map.size(); i++) {
-      bresenham_line(scan_data.robot_base_pts[i].x, scan_data.robot_base_pts[i].y,
+      bresenham_line(scan_data.robot_base_pts[0].x, scan_data.robot_base_pts[0].y,
         trans_in_map[i].x, trans_in_map[i].y, pts);
       for (const auto& pt : pts) {
         map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b::all(kFreeSpace);

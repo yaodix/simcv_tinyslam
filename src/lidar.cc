@@ -43,7 +43,7 @@ int Lidar::Scan(const Robot& robot, const cv::Mat& map) {
     Ray(robot_x, robot_y, cur_angle, laser_dist, laser_angle, map);
     
     scan_data_.laser_distance[i] =  laser_dist;
-    scan_data_.laser_angle[i] =  laser_angle;
+    scan_data_.laser_angle[i] =  laser_angle - robot_angle;
 
     if (laser_dist < 1e-4 ) {
       scan_data_.values[i] = kFreeSpace;

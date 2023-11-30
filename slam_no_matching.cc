@@ -18,10 +18,10 @@
 int main() {
   cv::Mat canvs = cv::Mat::zeros(300, 500, CV_8UC1);
   canvs.setTo(kUnknown);
-  cv::rectangle(canvs, {50, 50}, {400, 250}, cv::Scalar::all(kObstacle),3);
+  cv::rectangle(canvs, {50, 50}, {400, 280}, cv::Scalar::all(kObstacle),3);
 
   Robot robot(80, 100, 0);
-  robot.SetPoseStdErr(0.);
+  robot.SetPoseStdErr(0.2);
   Lidar lidar;
   lidar.SetLaserDetectionMax(150);
   CostMap cost_map(canvs);
@@ -51,9 +51,9 @@ int main() {
     std::cout << cur_scan_data.robot_base_pts.back() << std::endl;
     std::cout << cur_scan_data.robot_base_angle.front() << std::endl;
     std::cout << cur_scan_data.robot_base_angle.back() << std::endl;
-    cost_map.DrawScanData(cur_scan_data, 0);
+    cost_map.DrawScanData(cur_scan_data, 1);
     cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
-    cv::polylines(map_canvs, path, false, cv::Scalar(0, 123, 123), 1);
+    cv::polylines(map_canvs, path, false, cv::Scalar(0, 123, 123), 2);
     cv::polylines(map_canvs, drift_path, false, cv::Scalar(0, 0, 255), 1);
 
     robot.Draw(map_canvs);

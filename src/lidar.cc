@@ -42,6 +42,7 @@ int Lidar::Scan(const Robot& robot, const cv::Mat& map) {
       scan_data_.values[i] = kObstacle;
     }
     // 记录
+    robot.GetRealPose(robot_x, robot_y, robot_angle);
     scan_data_.robot_base_pts[i].x = robot_x;
     scan_data_.robot_base_pts[i].y = robot_y;
     scan_data_.robot_base_angle[i] = robot_angle;

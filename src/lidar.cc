@@ -19,10 +19,6 @@ int Lidar::LoopScan(const Robot& robot, const cv::Mat& map) {
 
 int Lidar::Scan(const Robot& robot, const cv::Mat& map) {
   double x_end, y_end;
-
-  double rx = ((double) rand() / (RAND_MAX));
-  double ry = ((double) rand() / (RAND_MAX));
-  double ra = ((double) rand() / (RAND_MAX));
   std::chrono::nanoseconds t(30);
 
   sd_mtx.lock();
@@ -30,14 +26,9 @@ int Lidar::Scan(const Robot& robot, const cv::Mat& map) {
     // get robot pose
     std::this_thread::sleep_for(t);
     double robot_x, robot_y, robot_angle;
-    robot.GetPose(robot_x, robot_y, robot_angle);
+    // robot.GetPose(robot_x, robot_y, robot_angle);
+    robot.GetDriftPose(robot_x, robot_y, robot_angle);
     double cur_angle = robot_angle + (360.0/scan_size_)*i;
-
-    // 加噪声
-    robot_x += rx * pose_std_err_;
-    robot_y += ry * pose_std_err_;
-    cur_angle += ra * pose_std_err_;
-
 
     double laser_dist, laser_angle;
     Ray(robot_x, robot_y, cur_angle, laser_dist, laser_angle, map);

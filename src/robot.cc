@@ -9,10 +9,10 @@
 // 采用半圆半方结构
 
 void Robot::Draw(cv::Mat& show_map) {
-  cv::circle(show_map, cv::Point(x_, y_), robot_radius, cv::Scalar(255,0,0), 1);
-  int x_robot_direct = std::round(robot_radius * 1.3 * cos(theta_*kDeg2rad));
-  int y_robot_direct = std::round(robot_radius * 1.3 * sin(theta_*kDeg2rad));
-  cv::arrowedLine(show_map, cv::Point(x_, y_), cv::Point(x_+x_robot_direct, y_+y_robot_direct),
+  cv::circle(show_map, cv::Point(drift_x_, drift_y_), robot_radius, cv::Scalar(255,0,0), 1);
+  int x_robot_direct = std::round(robot_radius * 1.3 * cos(drift_theta_ * kDeg2rad));
+  int y_robot_direct = std::round(robot_radius * 1.3 * sin(drift_theta_ * kDeg2rad));
+  cv::arrowedLine(show_map, cv::Point(drift_x_, drift_y_), cv::Point(drift_x_+x_robot_direct, drift_y_+y_robot_direct),
     cv::Scalar(255,0,0), 1);
 }
 
@@ -35,7 +35,8 @@ int Robot::Move(const std::vector<cv::Point>& path) {
   std::chrono::milliseconds t(50);
   std::cout << "stat positon " << x_ << " " << y_ << " " << theta_ << std::endl;
 
-  for (int i =0; i < path.size()-1; ++i) {
+
+  for (int i = 0; i < path.size()-1; ++i) {
     // 先判断方向是否一致，否，则旋转方向
     double path_angle = getPathAngle(path[i], path[i+1]);
     double cur_twist_speed = twist_speed_;
@@ -48,6 +49,10 @@ int Robot::Move(const std::vector<cv::Point>& path) {
 
     while (std::abs(theta_ - path_angle) > kAngleTolerance) {
       theta_ = theta_ + cur_twist_speed;
+      // 旋转运动仅加载旋转噪声,且噪声累加
+      double ra = ((double) rand() / (RAND_MAX));
+      drift_theta_ = drift_theta_ + (cur_twist_speed + ra*pose_std_err_ );
+
       // delay
       std::this_thread::sleep_for(t);
       // std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;
@@ -59,9 +64,16 @@ int Robot::Move(const std::vector<cv::Point>& path) {
     cv::Point2d direct_vec = cv::Point2d(path[i+1]- path[i])/(double)seg_cnt;
     std::cout << "new destination " << path[i+1].x << " " << path[i+1].y << " " << theta_ << std::endl;
 
+    // 平移运动仅加载平移噪声
     for(int vec_inc = 1; vec_inc <= seg_cnt; vec_inc++) {
       x_ = x_ + direct_vec.x;
       y_ = y_ + direct_vec.y;
+
+      double rx = ((double) rand() / (RAND_MAX));
+      double ry = ((double) rand() / (RAND_MAX));
+
+      drift_x_ = drift_x_ + direct_vec.x + (rx * pose_std_err_);
+      drift_y_ = drift_y_ + direct_vec.y + (ry * pose_std_err_);
       // delay
       std::this_thread::sleep_for(t);
       // std::cout << "cur pose " << x_ << " " << y_ << " " << theta_ << std::endl;

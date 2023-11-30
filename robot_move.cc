@@ -20,6 +20,7 @@ int main() {
   cv::rectangle(canvs, {50, 50}, {350, 250}, cv::Scalar::all(kObstacle),3);
 
   Robot robot(80, 100, 0);
+  robot.SetPoseStdErr(0.);
   CostMap cost_map(canvs);
 
   std::vector<cv::Point> path;
@@ -31,11 +32,16 @@ int main() {
   std::thread robot_move(&Robot::Move, &robot, path);
   robot_move.detach();
 
+  std::vector<cv::Point> drift_path;
   while(1) {
     double r_x, r_y, r_theta;
-    robot.GetPose(r_x, r_y, r_theta);
+    // robot.GetRealPose(r_x, r_y, r_theta);
+    robot.GetDriftPose(r_x, r_y, r_theta);
+    drift_path.emplace_back(r_x, r_y);
+
     cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
-    cv::polylines(map_canvs, path, false, cv::Scalar(0, 123, 255), 1);
+    cv::polylines(map_canvs, path, false, cv::Scalar(0, 123, 123), 1);
+    cv::polylines(map_canvs, drift_path, false, cv::Scalar(0, 0, 255), 1);
     robot.Draw(map_canvs);
     cv::imshow("robot_move", map_canvs);
     cv::waitKey(30);    

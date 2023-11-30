@@ -21,7 +21,8 @@ int main() {
   cv::rectangle(canvs, {50, 50}, {350, 250}, cv::Scalar::all(kObstacle),3);
 
   Robot robot(80, 100, 0);
-  Lidar lidar(10);
+  robot.SetPoseStdErr(0.2);
+  Lidar lidar;
   lidar.SetLaserDetectionMax(110);
   CostMap cost_map(canvs);
 
@@ -40,7 +41,7 @@ int main() {
   ScanData cur_scan_data;
   while(1) {
     double r_x, r_y, r_theta;
-    robot.GetPose(r_x, r_y, r_theta);
+    robot.GetDriftPose(r_x, r_y, r_theta);
 
     lidar.GetScanData(cur_scan_data);
     std::cout << cur_scan_data.robot_base_pts.front() << std::endl;

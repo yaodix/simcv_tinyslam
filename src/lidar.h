@@ -63,8 +63,8 @@ struct ScanData {
 class Lidar {
  public:
   Lidar() = default;
-  Lidar(double pose_std_err) {  // 机器人姿态误差
-    pose_std_err_ = pose_std_err;
+  Lidar(double std_err) {  // 机器人姿态误差
+    ray_std_err_ = std_err;
   }
   void SetLaserDetectionMax(int max_len_pixel) {
     range_max_ = max_len_pixel;

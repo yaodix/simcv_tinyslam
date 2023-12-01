@@ -1,6 +1,10 @@
 #include "scan_matching_plicp.h"
 
-ScanMatchingPLICP::ScanMatchingPLICP() {}
+#include "eigen3/Eigen/Dense"
+
+ScanMatchingPLICP::ScanMatchingPLICP() {
+    pose_plicp_ = Eigen::Matrix4d::Identity();
+}
 ScanMatchingPLICP::~ScanMatchingPLICP() {}
 
 void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pcl::PointCloud<pcl::PointXYZI>::Ptr per)
@@ -94,13 +98,15 @@ void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pc
     Eigen::Vector3d transform;
     transform << pose[0],pose[1],pose[2];
     pose[2] = pose[2]*180/3.14;
-    trans_plicp_ << pose[0],pose[1];
-    
+    trans_plicp_ << pose[0], pose[1], 0;
+    pose_plicp_ = Eigen::Matrix4d::Identity();
+    pose_plicp_.topLeftCorner(3,3) = rot_plicp_;
+    pose_plicp_(0,3) = pose[0];
+    pose_plicp_(1,3) = pose[1];
+
     printf("pl icp: %lf, %lf, %lf\n", pose[0], pose[1], pose[2] );
     Eigen::MatrixXd COV(3,3);
-    ComputeCovariance(points_map_,nearest_points_,transform,COV);
-
-
+    // ComputeCovariance(points_map_,nearest_points_,transform,COV);
 }
 
 Eigen::Vector2d ScanMatchingPLICP::PCL2Eigen(pcl::PointXYZI& p)
@@ -111,10 +117,10 @@ Eigen::Vector2d ScanMatchingPLICP::PCL2Eigen(pcl::PointXYZI& p)
     return pp;
 }
 
-Eigen::Matrix2d ScanMatchingPLICP::Euler2Rotation(double yaw)
+Eigen::Matrix3d ScanMatchingPLICP::Euler2Rotation(double yaw)
 {
-    Eigen::Matrix2d rot;
-    rot << cos(yaw), -sin(yaw),sin(yaw),cos(yaw);
+    Eigen::Matrix3d rot;
+    rot << cos(yaw), -sin(yaw),0, sin(yaw),cos(yaw), 0, 0, 0, 1;
     return rot;
 }
 

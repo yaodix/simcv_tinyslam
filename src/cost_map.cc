@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/) {
+int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/, cv::Scalar color) {
   if (map_canvs_.empty()) {
     map_canvs_ = cv::Mat(gt_map_.size(), CV_8UC3, cv::Scalar::all(kUnknown));
   }
@@ -44,7 +44,7 @@ int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/) {
 
   }
   for (const auto& pt : trans_in_map) {
-    map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b::all(kObstacle);
+    map_canvs_.at<cv::Vec3b>(pt) = cv::Vec3b(color[0], color[1], color[2]);
   }
 }
 

@@ -35,7 +35,7 @@ class CostMap {
     return map_canvs_;
   }
 
-  int DrawScanData(const ScanData& scan_data, int method = 0);
+  int DrawScanData(const ScanData& scan_data, int method = 0, cv::Scalar color = cv::Scalar::all(kObstacle));
 
  private:
   cv::Mat gt_map_;

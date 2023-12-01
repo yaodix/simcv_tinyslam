@@ -25,6 +25,7 @@ struct ScanData {
     nb_points = kScanSize;
   }
 
+  // 仅将激光雷达坐标系下物体转到像素坐标系
   void TransRaw(cv::Point base_emit_pos, double base_angle,
       std::vector<cv::Point2d>& trans_laser_pts) const {
     trans_laser_pts.clear();
@@ -38,6 +39,7 @@ struct ScanData {
     }
   }
 
+  // 去运动畸变
   void TransUndistort(std::vector<cv::Point2d>& trans_laser_pts) const{
     trans_laser_pts.clear();
     double x_end, y_end;

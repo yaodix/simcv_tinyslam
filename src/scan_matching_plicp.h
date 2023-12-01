@@ -26,20 +26,27 @@ class ScanMatchingPLICP
     ScanMatchingPLICP();
     ~ScanMatchingPLICP();
     void ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pcl::PointCloud<pcl::PointXYZI>::Ptr per);
-    void ReturnPose();
+
+    Eigen::Matrix4d ReturnPose() {
+      return pose_plicp_;
+    }
+
     Eigen::Vector2d PCL2Eigen(pcl::PointXYZI& p);
     void ComputeCovariance(vector<Eigen::Vector2d>& data_pi, vector<Eigen::Vector2d>& model_qi, 
                           Eigen::Vector3d& transform, Eigen::MatrixXd& ICP_COV);
     void ComputeCovarianceWithPP(vector<Eigen::Vector2d>& data_pi, vector<Eigen::Vector2d>& model_qi, 
                                 Eigen::Vector3d& transform, Eigen::MatrixXd& ICP_COV); 
-    Eigen::Matrix2d Euler2Rotation(double yaw);
+    Eigen::Matrix3d Euler2Rotation(double yaw);
     
   public:
     vector<Eigen::Vector2d> points_l_;
     pcl::PointCloud<pcl::PointXYZI> lane_l_;
     vector<Eigen::Vector2d> points_map_;
-    Eigen::Matrix2d rot_plicp_;
-    Eigen::Vector2d trans_plicp_;
+
+    Eigen::Matrix3d rot_plicp_;
+    Eigen::Vector3d trans_plicp_;
+    Eigen::Matrix4d pose_plicp_;
+
     vector<Eigen::Vector2d> nearest_points_;
     vector<Eigen::Vector2d> nearest_points_2_;
     vector<Eigen::Vector2d> matched_map_points_;

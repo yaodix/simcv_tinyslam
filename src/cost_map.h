@@ -36,6 +36,7 @@ class CostMap {
   }
 
   int DrawScanData(const ScanData& scan_data, int method = 0, cv::Scalar color = cv::Scalar::all(kObstacle));
+  int DrawScanData(const std::vector<cv::Point2d>& scan_data,cv::Point2d robot_base_pt, int method = 0, cv::Scalar color = cv::Scalar::all(kObstacle));
 
  private:
   cv::Mat gt_map_;

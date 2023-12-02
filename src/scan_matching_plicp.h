@@ -25,7 +25,7 @@ class ScanMatchingPLICP
   public:
     ScanMatchingPLICP();
     ~ScanMatchingPLICP();
-    void ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pcl::PointCloud<pcl::PointXYZI>::Ptr per);
+    void ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pcl::PointCloud<pcl::PointXYZI>::Ptr per, const std::vector<double>& init_pose);
 
     Eigen::Matrix4d ReturnPose() {
       return pose_plicp_;

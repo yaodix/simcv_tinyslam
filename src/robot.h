@@ -2,11 +2,12 @@
 
 #include <iostream>
 #include <math.h>
-#include <atomic>
+#include <mutex>
 
 #include "common_config.h"
 #include "opencv2/opencv.hpp"
 
+// struct RobotPose
 
 class Robot {
  public:
@@ -41,6 +42,12 @@ class Robot {
     drift_theta_ = theta;
   }
 
+  void SetDriftPose(double& x, double& y, double& theta) {
+    drift_x_ = x;
+    drift_y_ = y;
+    drift_theta_ = theta;
+  }
+
   void GetRealPose(double& x, double& y, double& theta) const {
     x = x_;
     y = y_;
@@ -65,10 +72,10 @@ class Robot {
 
   double pose_std_err_ = 0.;  // 机器人运动噪声
 
-  std::atomic<double> x_, y_;   // 位置，单位 pixel
-  std::atomic<double> theta_;  // 机器人角度，单位 degree
+  double x_, y_;   // 位置，单位 pixel
+  double theta_;  // 机器人角度，单位 degree
 
-  std::atomic<double> drift_x_, drift_y_;   // 偏移位置，单位 pixel
-  std::atomic<double> drift_theta_;  // 机器人偏移角度，单位 degree
+  double drift_x_, drift_y_;   // 偏移位置，单位 pixel
+  double drift_theta_;  // 机器人偏移角度，单位 degree
 
 };

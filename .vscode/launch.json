@@ -12,7 +12,8 @@
             // "program": "${workspaceFolder}/bin/laser_undistort", 
             // "program": "${workspaceFolder}/bin/robot_move",
             // "program": "${workspaceFolder}/bin/slam_no_matching",  
-            "program": "${workspaceFolder}/bin/pl_icp_main",  
+            // "program": "${workspaceFolder}/bin/pl_icp_main",  
+            "program": "${workspaceFolder}/bin/slam_with_matching",  
             "args": [], // 存放argv参数
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

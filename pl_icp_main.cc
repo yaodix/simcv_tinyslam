@@ -83,7 +83,8 @@ int main() {
 
   std::cout << ref->points.front() << std::endl;
   std::cout << per->points.front() << std::endl;
-  plicp.ScanMatching(ref, per);
+  std::vector<double> init_pose{1,1,0};
+  plicp.ScanMatching(ref, per,init_pose);
   Eigen::Matrix4d transfrom_mat = plicp.ReturnPose();
 
   pcl::transformPointCloud (*per, *transform_pc, transfrom_mat);

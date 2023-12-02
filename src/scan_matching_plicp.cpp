@@ -7,7 +7,7 @@ ScanMatchingPLICP::ScanMatchingPLICP() {
 }
 ScanMatchingPLICP::~ScanMatchingPLICP() {}
 
-void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pcl::PointCloud<pcl::PointXYZI>::Ptr per)
+void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pcl::PointCloud<pcl::PointXYZI>::Ptr per, const std::vector<double>& init_pose)
 {
     points_map_.clear();
     lane_l_.clear();
@@ -21,7 +21,7 @@ void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pc
     int K = 2;
     std::vector<int> index(K);
     std::vector<float> distance(K);
-    double pose[3] = {0.0,-0.3,0};
+    double pose[3] = {init_pose[0], init_pose[1], init_pose[2]};
     Eigen::Vector2d aver_points;
     
     for(int i = 0; i < per->points.size(); i++)

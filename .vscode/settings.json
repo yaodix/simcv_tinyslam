@@ -60,6 +60,7 @@
     "condition_variable": "cpp",
     "unordered_set": "cpp",
     "mutex": "cpp",
-    "typeindex": "cpp"
+    "typeindex": "cpp",
+    "dense": "cpp"
   }
 }

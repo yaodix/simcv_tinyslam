@@ -93,12 +93,12 @@ int main() {
   
   ScanData cur_scan_data;
   std::vector<cv::Point> drift_path, trans_path;
-  std::vector<cv::Point2d> pre_scan;
+  std::vector<cv::Point2d> local_map;
   std::vector<cv::Point2d> cur_scan;
   std::vector<cv::Point2d> trans_scan;
   bool init_scan = false;
   cv::Point2d trans_robo_pt;
-
+  int scan_cnt = 0;
   while(1) {
     double r_x, r_y, r_theta;
     robot.GetDriftPose(r_x, r_y, r_theta);
@@ -115,24 +115,28 @@ int main() {
         continue;
 
     // 更新scan数据和机器人位置 
+      scan_cnt++;
+      std::cout << "scan cnt " << scan_cnt << std::endl;
       std::vector<double> init_pose{1, 1, 0};
-      // init_pose[0] = r_x
-      GetScanTransform(pre_scan, cur_scan, cur_scan_data.robot_base_pts.front(),init_pose, trans_scan, trans_robo_pt);
-
+      cv::Rect loca_map_rect(r_x-250, r_y-250, 500, 500);
+      local_map = cost_map.GetLocalMap(loca_map_rect);
       cv::Mat map_show_icp = cost_map.GetGridMapCanvs().clone();
-      for (auto& pt : pre_scan) {
+      for (auto& pt : local_map) {
         map_show_icp.at<cv::Vec3b>(pt) = cv::Vec3b(0,234,0);
       }
+      cv::rectangle(map_show_icp, loca_map_rect, cv::Scalar(0,0,234));
+      GetScanTransform(local_map, cur_scan, cur_scan_data.robot_base_pts.front(),init_pose, trans_scan, trans_robo_pt);
+
       for (int i =0; i < cur_scan.size(); i++) {
         map_show_icp.at<cv::Vec3b>(cur_scan[i]) = cv::Vec3b(234,0,0);
         map_show_icp.at<cv::Vec3b>(trans_scan[i]) = cv::Vec3b(0,0,234);
       }
       // robot.SetDriftPose()
       trans_path.emplace_back(trans_robo_pt);
+
     }
 
     cost_map.DrawScanData(trans_scan, trans_robo_pt);
-    pre_scan = trans_scan;
 
     cv::Mat map_canvs = cost_map.GetGridMapCanvs().clone();
     cv::polylines(map_canvs, path, false, cv::Scalar(0, 123, 123), 2);

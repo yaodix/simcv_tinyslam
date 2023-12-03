@@ -13,7 +13,8 @@
             // "program": "${workspaceFolder}/bin/robot_move",
             // "program": "${workspaceFolder}/bin/slam_no_matching",  
             // "program": "${workspaceFolder}/bin/pl_icp_main",  
-            "program": "${workspaceFolder}/bin/slam_with_matching",  
+            // "program": "${workspaceFolder}/bin/slam_with_matching_scan",  
+            "program": "${workspaceFolder}/bin/slam_with_matching_map",  
             "args": [], // 存放argv参数
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

@@ -65,6 +65,7 @@ int GetScanTransform(const std::vector<cv::Point2d>& pre_scan, const std::vector
   return 0;
 }
 
+
 int main() {
   cv::Mat canvs = cv::Mat::zeros(300, 500, CV_8UC1);
   canvs.setTo(kUnknown);

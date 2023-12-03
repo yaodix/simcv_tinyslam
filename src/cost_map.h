@@ -35,12 +35,14 @@ class CostMap {
     return map_canvs_;
   }
 
+  std::vector<cv::Point2d> GetLocalMap(cv::Rect win);
+
   int DrawScanData(const ScanData& scan_data, int method = 0, cv::Scalar color = cv::Scalar::all(kObstacle));
   int DrawScanData(const std::vector<cv::Point2d>& scan_data,cv::Point2d robot_base_pt, int method = 0, cv::Scalar color = cv::Scalar::all(kObstacle));
 
  private:
-  cv::Mat gt_map_;
-  cv::Mat map_canvs_;
+  cv::Mat gt_map_;   // 传入的地图图像，传入后保持不变
+  cv::Mat map_canvs_;  // 从空白图像绘制地图
 
  int bresenham_line(cv::Point pt1, cv::Point pt2, std::vector<cv::Point>& line_pts);
  int bresenham_line(int x1, int y1, int x2, int y2, std::vector<cv::Point>& line_pts);

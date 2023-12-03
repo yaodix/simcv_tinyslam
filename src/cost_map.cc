@@ -3,6 +3,18 @@
 #include <iostream>
 #include <vector>
 
+std::vector<cv::Point2d> CostMap::GetLocalMap(cv::Rect win) {
+  std::vector<cv::Point2d> obs_pts;
+  for(int r = std::max(0, win.y); r < std::min(map_canvs_.rows, win.y+win.height); r++) {
+    for (int c = std::max(0, win.x); c < std::min(map_canvs_.cols, win.x+win.width); c++) {
+      if (map_canvs_.at<cv::Vec3b>(r, c)[0] == kObstacle) {
+        obs_pts.emplace_back(c, r);
+      }
+    }
+  }
+  return obs_pts;
+}
+
 int CostMap::DrawScanData(const ScanData& scan_data, int method /*= 0*/, cv::Scalar color) {
   if (map_canvs_.empty()) {
     map_canvs_ = cv::Mat(gt_map_.size(), CV_8UC3, cv::Scalar::all(kUnknown));

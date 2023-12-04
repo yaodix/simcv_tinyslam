@@ -143,7 +143,6 @@ int main() {
       }
       for (int i =0; i < cur_scan.size(); i++) {
         map_show_icp.at<cv::Vec3b>(cur_scan[i]) = cv::Vec3b(234,0,0);
-        std::cout << "trans_scan[i] size "<< trans_scan.size() << " " << i << " " << trans_scan[i] << std::endl;
         map_show_icp.at<cv::Vec3b>(trans_scan[i]) = cv::Vec3b(0,0,234);
       }
       trans_path.emplace_back(trans_robo_pt);

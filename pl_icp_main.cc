@@ -90,9 +90,12 @@ int main() {
   pcl::transformPointCloud (*per, *transform_pc, transfrom_mat);
   for (int i = 0; i < transform_pc->points.size(); i++) {
     map_canvs.at<cv::Vec3b>(transform_pc->points[i].y, transform_pc->points[i].x) = cv::Vec3b(234,0,0);
-
   }
-
   std::cout << transfrom_mat << std::endl;
+
+  cv::imwrite("./workspace/pl_icp.png", map_canvs);
+  cv::imshow("show", map_canvs);
+  cv::waitKey(30);
+
   return 0;
 }

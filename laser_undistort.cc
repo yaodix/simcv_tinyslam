@@ -113,7 +113,10 @@ int test_CastMove() {
   }
   cv::circle(canvs, trans_in_map[0], 1, cv::Scalar(0,255,0), 3);
   cv::circle(canvs, trans_in_map.back(), 1, cv::Scalar(255,0,0), 1);
-
+  
+  cv::imwrite("./workspace/laser_undistort.png", canvs);
+  cv::imshow("show", canvs);
+  cv::waitKey(30);
   return 0;
 }
 

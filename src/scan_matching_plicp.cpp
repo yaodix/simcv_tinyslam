@@ -60,9 +60,9 @@ void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pc
 					normal_vector_.emplace_back(normal_vector);
 			}
 			ceres::CostFunction *cost_function = PLICP::create(q, p1, p2);
-            ceres::LossFunction *loss_function1 = new ceres::CauchyLoss(0.5); //2.1 设定 loss function
+            ceres::LossFunction *loss_function1 = new ceres::CauchyLoss(0.2); //2.1 设定 loss function
 			problem.AddResidualBlock(cost_function,
-									loss_function1,
+									nullptr,
 									pose);
 		}
         
@@ -89,7 +89,7 @@ void ScanMatchingPLICP::ScanMatching(pcl::PointCloud<pcl::PointXYZI>::Ptr ref,pc
     std::cout << "Eigenvectors for points distribution:\n" << pointses.eigenvectors().real() << std::endl;
 	// plicp
     ceres::Solver::Options options;
-	options.linear_solver_type =  ceres::DENSE_QR;
+	options.linear_solver_type =  ceres::DENSE_SCHUR;
 	options.max_num_iterations = 20;
     options.minimizer_progress_to_stdout = false;
 

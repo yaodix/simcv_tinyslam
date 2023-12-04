@@ -13,58 +13,77 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>    
+#include <pcl/registration/icp.h>
+
 #include "src/common_config.h"
 #include "src/robot.h"
 #include "src/lidar.h"
 #include "src/cost_map.h"
 #include "src/scan_matching_plicp.h"
 
-int GetScanTransform(const std::vector<cv::Point2d>& pre_scan, const std::vector<cv::Point2d>& cur_scan,
-    const cv::Point2d& robot_pt, const std::vector<double>& init_pose, std::vector<cv::Point2d>& trans_scan,
+int PclIcp(const std::vector<cv::Point2d>& pre_scan, const std::vector<cv::Point2d>& cur_scan,
+    const cv::Point2d& robot_pt, std::vector<cv::Point2d>& trans_scan,
      cv::Point2d& trans_robot_pt) {
-  ScanMatchingPLICP plicp;
-
-  pcl::PointCloud<pcl::PointXYZI>::Ptr ref(new pcl::PointCloud<pcl::PointXYZI>);
-  pcl::PointCloud<pcl::PointXYZI>::Ptr per(new pcl::PointCloud<pcl::PointXYZI>);
-  pcl::PointCloud<pcl::PointXYZI>::Ptr transform_pc(new pcl::PointCloud<pcl::PointXYZI>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr ref(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr per(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr transform_pc(new pcl::PointCloud<pcl::PointXYZ>);
   for (auto& pt : pre_scan) {
-    pcl::PointXYZI pt_tmp;
+    pcl::PointXYZ pt_tmp;
     pt_tmp.x = pt.x;
     pt_tmp.y = pt.y;
     pt_tmp.z = 1.;
-    pt_tmp.intensity = 255;
     ref->push_back(pt_tmp);
   }
   for (auto& pt : cur_scan) {
-    pcl::PointXYZI pt_tmp;
+    pcl::PointXYZ pt_tmp;
     pt_tmp.x = pt.x;
     pt_tmp.y = pt.y;
     pt_tmp.z = 1.;
-    pt_tmp.intensity = 100;
     per->push_back(pt_tmp);
   }
+ //creates an instance of an IterativeClosestPoint and gives it some useful information
+  pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+  icp.setTransformationEpsilon(1e-5);
+  icp.setMaximumIterations(1e3);
+  icp.setMaxCorrespondenceDistance(20);  // 剔除离群点
 
-  plicp.ScanMatching(ref, per, init_pose);
-  Eigen::Matrix4d transfrom_mat = plicp.ReturnPose();
+  icp.setInputTarget(ref);
+  icp.setInputCloud(per);
 
-  pcl::PointXYZI rob_pt;
+  //Creates a pcl::PointCloud<pcl::PointXYZ> to which the IterativeClosestPoint can save the resultant cloud after applying the algorithm
+  pcl::PointCloud<pcl::PointXYZ> Final;
+
+  //Call the registration algorithm which estimates the transformation and returns the transformed source (input) as output.
+  icp.align(Final);
+  trans_scan.clear();
+  trans_scan.reserve(pre_scan.size());
+  for (int i = 0; i < Final.points.size(); i++) {
+    trans_scan.emplace_back(Final.points[i].x, Final.points[i].y);
+  }
+
+  //Return the state of convergence after the last align run. 
+  //If the two PointClouds align correctly then icp.hasConverged() = 1 (true). 
+  std::cout << "has converged: " << icp.hasConverged() <<std::endl;
+
+  //Obtain the Euclidean fitness score (e.g., sum of squared distances from the source to the target) 
+  std::cout << "score: " <<icp.getFitnessScore() << std::endl; 
+  std::cout << "----------------------------------------------------------"<< std::endl;
+
+  //Get the final transformation matrix estimated by the registration method. 
+  std::cout << icp.getFinalTransformation() << std::endl;
+
+  pcl::PointCloud<pcl::PointXYZ>::Ptr robot_pc(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointXYZ rob_pt;
   rob_pt.x = robot_pt.x;
   rob_pt.y = robot_pt.y;
   rob_pt.z = 1.;
-  rob_pt.intensity = 1.;
-  per->push_back(rob_pt);
+  robot_pc->push_back(rob_pt);
 
-  pcl::transformPointCloud (*per, *transform_pc, transfrom_mat);
-  trans_scan.clear();
-  trans_scan.reserve(pre_scan.size());
-  for (int i = 0; i < transform_pc->points.size()-1; i++) {
-    trans_scan.emplace_back(transform_pc->points[i].x, transform_pc->points[i].y);
-  }
-  trans_robot_pt.x = transform_pc->points.back().x;
-  trans_robot_pt.y = transform_pc->points.back().y;
-  return 0;
+  pcl::transformPointCloud (*robot_pc, *transform_pc, icp.getFinalTransformation());
+  trans_robot_pt.x = transform_pc->points.front().x;
+  trans_robot_pt.y = transform_pc->points.front().y;
+
 }
-
 
 int main() {
   cv::Mat canvs = cv::Mat::zeros(300, 500, CV_8UC1);
@@ -116,9 +135,7 @@ int main() {
         continue;
 
     // 更新scan数据和机器人位置 
-      std::vector<double> init_pose{1, 1, 0};
-      // init_pose[0] = r_x
-      GetScanTransform(pre_scan, cur_scan, cur_scan_data.robot_base_pts.front(),init_pose, trans_scan, trans_robo_pt);
+      PclIcp(pre_scan, cur_scan, cur_scan_data.robot_base_pts.front(), trans_scan, trans_robo_pt);
 
       cv::Mat map_show_icp = cost_map.GetGridMapCanvs().clone();
       for (auto& pt : pre_scan) {
@@ -126,9 +143,9 @@ int main() {
       }
       for (int i =0; i < cur_scan.size(); i++) {
         map_show_icp.at<cv::Vec3b>(cur_scan[i]) = cv::Vec3b(234,0,0);
+        std::cout << "trans_scan[i] size "<< trans_scan.size() << " " << i << " " << trans_scan[i] << std::endl;
         map_show_icp.at<cv::Vec3b>(trans_scan[i]) = cv::Vec3b(0,0,234);
       }
-      // robot.SetDriftPose()
       trans_path.emplace_back(trans_robo_pt);
     }
 

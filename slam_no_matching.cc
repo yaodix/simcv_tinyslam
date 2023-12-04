@@ -21,7 +21,7 @@ int main() {
   cv::rectangle(canvs, {50, 50}, {400, 280}, cv::Scalar::all(kObstacle),3);
 
   Robot robot(80, 100, 0);
-  robot.SetPoseStdErr(0.);
+  robot.SetPoseStdErr(0.2);
   Lidar lidar;
   lidar.SetLaserDetectionMax(150);
   CostMap cost_map(canvs);

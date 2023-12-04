@@ -27,7 +27,7 @@ int Lidar::Scan(const Robot& robot, const cv::Mat& map) {
     std::this_thread::sleep_for(t);
     double robot_x, robot_y, robot_angle;
     // robot.GetPose(robot_x, robot_y, robot_angle);
-    robot.GetDriftPose(robot_x, robot_y, robot_angle);
+    robot.GetDriftPose(robot_x, robot_y, robot_angle);  // 噪声坐标产生的lidar扫描点
     double cur_angle = robot_angle + (360.0/scan_size_)*i;
 
     double laser_dist, laser_angle;
